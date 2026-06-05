@@ -56,7 +56,7 @@ import streamlit.components.v1 as components  # Optional confetti
 # ─────────────────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="BS Pricer Pro",
-    page_icon="📈",
+    page_icon="BS",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -532,7 +532,7 @@ def render_market_context_card(context: dict, current_iv: float,
 # SIDEBAR
 # ─────────────────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.header("📊 Parameters")
+    st.header("Parameters")
 
     symbol = st.text_input(
         "Ticker Symbol",
@@ -540,7 +540,7 @@ with st.sidebar:
         help="Examples: AAPL, TSLA, ^HSI, 0700.HK",
     )
 
-    if st.button("🔄 Fetch Live Data", use_container_width=True):
+    if st.button("Fetch Live Data", use_container_width=True):
         with st.spinner(f"Fetching {symbol}…"):
             S_live, sigma_live, realized_vol_30d_live, r_live = fetch_data(symbol)
         st.session_state["S"]     = S_live
@@ -548,7 +548,7 @@ with st.sidebar:
         st.session_state["realized_vol_30d"] = realized_vol_30d_live
         st.session_state["r"]     = r_live
         st.success(
-            f"✅  S={S_live:.2f}  σ={sigma_live*100:.1f}%  "
+            f"S={S_live:.2f}  σ={sigma_live*100:.1f}%  "
             f"RV30={realized_vol_30d_live*100:.1f}%  r={r_live*100:.1f}%"
         )
 
@@ -605,7 +605,7 @@ with st.sidebar:
     ) / 100.0
 
     st.divider()
-    price_btn = st.button("💹 Price & Greeks!", type="primary", use_container_width=True)
+    price_btn = st.button("Price & Greeks", type="primary", use_container_width=True)
     if price_btn:
         st.session_state["calculated"] = True
 
@@ -613,14 +613,14 @@ with st.sidebar:
 # ─────────────────────────────────────────────────────────────────────────────
 # HEADER
 # ─────────────────────────────────────────────────────────────────────────────
-st.title("🚀 Black-Scholes-Merton Option Pricer Pro")
+st.title("Black-Scholes-Merton Option Pricer Pro")
 st.markdown(
     "**Live pricing · Greeks · Interactive viz &nbsp;|&nbsp; "
     "AAPL / ^HSI ready &nbsp;|&nbsp; PolyU Quant Hackathon Demo**"
 )
 st.caption(
-    "👨‍🎓 Built by Vikramaditya Shukla &nbsp;|&nbsp; "
-    "[GitHub](https://github.com/yourusername/bs-pricer) &nbsp;|&nbsp; "
+    "Built by Vikramadity Shukla &nbsp;|&nbsp; "
+    "[GitHub](https://github.com/tunerfrick/blackscholes) &nbsp;|&nbsp; "
     f"Last updated: {datetime.now().strftime('%d %b %Y')}"
 )
 st.divider()
@@ -632,9 +632,9 @@ st.divider()
 if "calculated" not in st.session_state:
     # Nice splash while waiting for first calculation
     st.info(
-        "👈  **Set your parameters in the sidebar**, then click **💹 Price & Greeks!** "
+        "**Set your parameters in the sidebar**, then click **Price & Greeks** "
         "to see results.\n\n"
-        "Tip: hit **🔄 Fetch Live Data** first to auto-populate S, σ, and r for any symbol."
+        "Tip: hit **Fetch Live Data** first to auto-populate S, σ, and r for any symbol."
     )
 else:
     # ── Resolve current spot price ─────────────────────────────────────────
@@ -655,7 +655,7 @@ else:
     moneyness = S_final / K
 
     # ── KPI row ────────────────────────────────────────────────────────────
-    st.subheader("📈 Pricing Summary")
+    st.subheader("Pricing Summary")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Option Price",   f"${price:.4f}")
     c2.metric("Intrinsic Value", f"${intrinsic:.4f}")
@@ -663,7 +663,7 @@ else:
     c4.metric("Moneyness (S/K)", f"{moneyness:.4f}",
               delta=("ITM" if moneyness > 1 else ("ATM" if abs(moneyness-1) < 0.005 else "OTM")))
 
-    st.subheader("🔢 Greeks")
+    st.subheader("Greeks")
     g1, g2, g3, g4, g5 = st.columns(5)
     g1.metric("Delta (Δ)",       f"{delta:.4f}")
     g2.metric("Gamma (Γ)",       f"{gamma:.6f}")
@@ -696,7 +696,7 @@ else:
     else:
         realized_vol_30d = float(st.session_state["realized_vol_30d"])
 
-    st.subheader("🧠 Market Context")
+    st.subheader("Market Context")
     headlines = fetch_news_headlines(symbol)
     if not headlines:
         st.caption("No yfinance headlines found for this ticker; DeepSeek will rely on IV versus realized vol.")
@@ -720,7 +720,7 @@ else:
     st.divider()
 
     # ── Formula expander ───────────────────────────────────────────────────
-    with st.expander("📐 Black-Scholes-Merton Formulae (click to expand)"):
+    with st.expander("Black-Scholes-Merton Formulae"):
         st.latex(r"""
             d_1 = \frac{\ln(S/K)\;+\;(r - q + \tfrac{1}{2}\sigma^2)\,T}{\sigma\,\sqrt{T}}
         """)
@@ -750,20 +750,20 @@ else:
     })
     df["Value"] = df["Value"].apply(lambda x: round(x, 6))
 
-    st.subheader("📋 Full Results Table")
+    st.subheader("Full Results Table")
     st.dataframe(df, use_container_width=True, hide_index=True)
 
     col_dl1, col_dl2, _ = st.columns([1, 1, 3])
     with col_dl1:
         st.download_button(
-            "💾 Download CSV",
+            "Download CSV",
             data=df.to_csv(index=False).encode(),
             file_name=f"bs_greeks_{symbol}_{opt_type}_{datetime.now():%Y%m%d_%H%M}.csv",
             mime="text/csv",
         )
     with col_dl2:
         st.download_button(
-            "📄 Download JSON",
+            "Download JSON",
             data=df.to_json(orient="records", indent=2).encode(),
             file_name=f"bs_greeks_{symbol}_{opt_type}_{datetime.now():%Y%m%d_%H%M}.json",
             mime="application/json",
@@ -786,7 +786,7 @@ else:
     )
 
     tab1, tab2, tab3, tab4 = st.tabs(
-        ["📉 Payoff Diagram", "🌡️ Greeks Heatmap", "🌊 Vol Smile", "📊 Sensitivity"]
+        ["Payoff Diagram", "Greeks Heatmap", "Vol Smile", "Sensitivity"]
     )
 
     # ── Tab 1: Payoff ──────────────────────────────────────────────────────
@@ -926,7 +926,7 @@ else:
 st.divider()
 st.markdown(
     "<div style='text-align:center; color:#546e7a; font-size:0.82rem;'>"
-    "⭐ Star on <a href='https://github.com/yourusername/bs-pricer' style='color:#64b5f6;'>GitHub</a> &nbsp;|&nbsp; "
+    "<a href='https://github.com/tunerfrick/blackscholes' style='color:#64b5f6;'>GitHub</a> &nbsp;|&nbsp; "
     "Deployed on <a href='https://streamlit.io/cloud' style='color:#64b5f6;'>Streamlit Cloud</a> &nbsp;|&nbsp; "
     "Black-Scholes-Merton model · Greeks per standard quant finance convention"
     "</div>",
